@@ -21,7 +21,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .metric{background:#fff;border-radius:10px;padding:14px;border:1px solid #eee}
 .metric-val{font-size:20px;font-weight:600}
 .metric-label{font-size:11px;color:#888;margin-top:3px}
-.card{background:#fff;border-radius:10px;padding:14px 14px;margin-bottom:12px;border:1px solid #eee}
+.card{background:#fff;border-radius:10px;padding:14px;margin-bottom:12px;border:1px solid #eee}
 .card-title{font-size:14px;font-weight:600;margin-bottom:12px}
 table{width:100%;border-collapse:collapse;table-layout:fixed}
 th{font-size:11px;color:#888;font-weight:500;text-align:left;padding:0 6px 8px 0;border-bottom:1px solid #eee}
@@ -49,15 +49,12 @@ button{cursor:pointer;font-family:inherit}
 .loading{text-align:center;padding:1.5rem;color:#aaa;font-size:13px}
 .err-bar{background:#ffebee;color:#c62828;padding:12px 14px;border-radius:8px;font-size:13px;margin-bottom:12px;display:none;line-height:1.6;border:1px solid #ffcdd2}
 .ok-bar{background:#e8f5e9;color:#2e7d32;padding:12px 14px;border-radius:8px;font-size:13px;margin-bottom:12px;display:none;border:1px solid #c8e6c9}
-/* 訂單卡片 */
-.order-card{background:#fff;border-radius:10px;border:1px solid #eee;padding:13px 14px;margin-bottom:9px;cursor:pointer;transition:border-color 0.15s;-webkit-tap-highlight-color:transparent}
-.order-card:active{border-color:#bbb;background:#fafafa}
+.order-card{background:#fff;border-radius:10px;border:1px solid #eee;padding:13px 14px;margin-bottom:9px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.order-card:active{background:#fafafa}
 .order-card-top{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:7px}
 .order-card-name{font-weight:600;font-size:14px}
 .order-card-date{font-size:11px;color:#aaa;margin-top:2px}
 .order-card-bottom{display:flex;gap:7px;align-items:center;flex-wrap:wrap}
-.order-card-amount{font-size:13px;font-weight:500}
-/* Modal - bottom sheet on mobile */
 .overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:100;align-items:flex-end;justify-content:center}
 .modal{background:#fff;border-radius:16px 16px 0 0;padding:16px 16px 32px;width:100%;max-height:92vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .modal-handle{width:36px;height:4px;background:#ddd;border-radius:2px;margin:0 auto 14px}
@@ -72,22 +69,19 @@ button{cursor:pointer;font-family:inherit}
 .detail-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid #f0f0f0;font-size:13px}
 .detail-row:last-child{border:none}
 .detail-key{color:#888;flex-shrink:0;margin-right:8px;font-size:12px}
-.status-select{padding:7px 10px;border-radius:8px;border:1px solid #ddd;background:#fff;font-size:13px;cursor:pointer;font-family:inherit;-webkit-appearance:none;min-width:100px}
+.status-select{padding:7px 10px;border-radius:8px;border:1px solid #ddd;background:#fff;font-size:13px;cursor:pointer;font-family:inherit;-webkit-appearance:none;min-width:110px}
 .notion-link{display:inline-block;margin-top:12px;font-size:12px;color:#1565c0;text-decoration:none;padding:4px 0}
-/* 明細表格 */
 .items-section{margin-top:14px;padding-top:12px;border-top:1px solid #eee}
 .items-title{font-size:12px;font-weight:600;color:#666;margin-bottom:8px}
 .items-table{width:100%;border-collapse:collapse;font-size:13px}
 .items-table th{font-size:11px;color:#aaa;font-weight:500;text-align:left;padding:0 4px 6px 0;border-bottom:1px solid #eee}
 .items-table td{padding:7px 4px 7px 0;border-bottom:1px solid #f5f5f5;vertical-align:top;line-height:1.4}
 .items-table tr:last-child td{border:none}
-.items-total{display:flex;justify-content:flex-end;align-items:center;gap:8px;padding-top:8px;border-top:1px solid #eee;font-size:13px;font-weight:600;margin-top:4px}
-/* 設定 */
+.items-total{display:flex;justify-content:flex-end;gap:8px;padding-top:8px;border-top:1px solid #eee;font-size:13px;font-weight:600;margin-top:4px}
 .settings-input{width:100%;padding:11px 12px;border-radius:8px;border:1px solid #ddd;font-size:14px;font-family:inherit;-webkit-appearance:none;background:#fff;color:#1a1a1a}
 .settings-input:focus{outline:none;border-color:#1a1a1a}
-
 @media(min-width:640px){
-  .container{padding:20px 20px}
+  .container{padding:20px}
   .metrics{grid-template-columns:repeat(4,1fr)}
   .fgrid{grid-template-columns:1fr 1fr}
   .overlay{align-items:center;padding:24px}
@@ -115,6 +109,7 @@ button{cursor:pointer;font-family:inherit}
     <button onclick="showTab('settings',this)">設定</button>
   </div>
 
+  <!-- 總覽 -->
   <div id="tab-dashboard" class="section active">
     <div class="metrics">
       <div class="metric"><div class="metric-val" id="m-total">—</div><div class="metric-label">總訂單數</div></div>
@@ -128,6 +123,7 @@ button{cursor:pointer;font-family:inherit}
     </div>
   </div>
 
+  <!-- 訂單列表 -->
   <div id="tab-orders" class="section">
     <div class="toolbar">
       <input type="text" id="search" placeholder="搜尋客戶姓名..." oninput="filterOrders()">
@@ -146,12 +142,14 @@ button{cursor:pointer;font-family:inherit}
     <div id="order-list-wrap"><div class="loading">載入中...</div></div>
   </div>
 
+  <!-- 商品資料 -->
   <div id="tab-products" class="section">
     <div class="card" style="padding:12px 14px">
       <div id="product-table"><div class="loading">載入中...</div></div>
     </div>
   </div>
 
+  <!-- 設定 -->
   <div id="tab-settings" class="section">
     <div class="card">
       <div class="card-title">Notion 資料庫設定</div>
@@ -180,6 +178,7 @@ button{cursor:pointer;font-family:inherit}
   </div>
 </div>
 
+<!-- 訂單詳情 Modal -->
 <div id="detail-modal" class="overlay">
   <div class="modal">
     <div class="modal-handle"></div>
@@ -191,6 +190,7 @@ button{cursor:pointer;font-family:inherit}
   </div>
 </div>
 
+<!-- 新增訂單 Modal -->
 <div id="new-modal" class="overlay">
   <div class="modal">
     <div class="modal-handle"></div>
@@ -201,7 +201,12 @@ button{cursor:pointer;font-family:inherit}
     </div>
     <div class="fgrid">
       <div class="field"><label>訂購管道</label>
-        <select id="n-channel"><option>Line 官方</option><option>Line 私訊</option><option>Instagram</option><option>其他</option></select>
+        <select id="n-channel">
+          <option>Line 官方</option>
+          <option>Line 私訊</option>
+          <option>Instagram</option>
+          <option>其他</option>
+        </select>
       </div>
       <div class="field"><label>訂購日期</label><input type="date" id="n-date"></div>
     </div>
@@ -284,7 +289,9 @@ function gp(props,key,type){
   const p=props[key];if(!p)return type==='number'?0:'';
   if(type==='title')return(p.title||[]).map(t=>t.plain_text).join('')||'';
   if(type==='number')return p.number||0;
-if(type==='multi_select')return(p.multi_select||[]).map(s=>s.name).join(', ')||'';  if(type==='date')return p.date?.start||'';
+  if(type==='select')return p.select?.name||'';
+  if(type==='multi_select')return(p.multi_select||[]).map(s=>s.name).join(', ')||'';
+  if(type==='date')return p.date?.start||'';
   if(type==='rich_text')return(p.rich_text||[]).map(t=>t.plain_text).join('')||'';
   if(type==='phone')return p.phone_number||'';
   if(type==='rollup')return p.rollup?.number||0;
@@ -294,7 +301,19 @@ if(type==='multi_select')return(p.multi_select||[]).map(s=>s.name).join(', ')||'
 
 function parseOrder(page){
   const p=page.properties;
-  return{id:page.id,name:gp(p,'訂購姓名','title'),channel:gp(p,'訂購管道','multi_select'),date:gp(p,'訂購日期','date'),total:Number(gp(p,'總金額','rollup')||gp(p,'總金額','number')||0),payStatus:gp(p,'付款狀態','select'),orderStatus:gp(p,'訂單狀態','select'),note:gp(p,'備註','rich_text'),phone:gp(p,'電話','phone')||gp(p,'電話','rich_text')||''};
+  // 訂購管道嘗試 select，若空再試 multi_select
+  const channel=gp(p,'訂購管道','select')||gp(p,'訂購管道','multi_select');
+  return{
+    id:page.id,
+    name:gp(p,'訂購姓名','title'),
+    channel,
+    date:gp(p,'訂購日期','date'),
+    total:Number(gp(p,'總金額','rollup')||gp(p,'總金額','number')||0),
+    payStatus:gp(p,'付款狀態','select'),
+    orderStatus:gp(p,'訂單狀態','select'),
+    note:gp(p,'備註','rich_text'),
+    phone:gp(p,'電話','phone')||gp(p,'電話','rich_text')||'',
+  };
 }
 
 function setStatus(text,ok){
@@ -353,14 +372,21 @@ function orderCard(o){
       <div>${payBadge(o.payStatus)}</div>
     </div>
     <div class="order-card-bottom">
-      <span class="order-card-amount">NT$${o.total.toLocaleString()}</span>
+      <span style="font-size:13px;font-weight:500">NT$${o.total.toLocaleString()}</span>
       ${orderBadge(o.orderStatus)}
     </div>
   </div>`;
 }
 
 function desktopRow(o){
-  return`<tr><td title="${o.name}">${o.name}</td><td>${o.date?o.date.slice(5):'-'}</td><td>NT$${o.total.toLocaleString()}</td><td>${payBadge(o.payStatus)}</td><td>${orderBadge(o.orderStatus)}</td><td><button class="btn btn-sm" onclick="viewOrder('${o.id}')">詳情</button></td></tr>`;
+  return`<tr>
+    <td title="${o.name}">${o.name}</td>
+    <td>${o.date?o.date.slice(5):'-'}</td>
+    <td>NT$${o.total.toLocaleString()}</td>
+    <td>${payBadge(o.payStatus)}</td>
+    <td>${orderBadge(o.orderStatus)}</td>
+    <td><button class="btn btn-sm" onclick="viewOrder('${o.id}')">詳情</button></td>
+  </tr>`;
 }
 
 function renderRecent(){
@@ -375,7 +401,11 @@ function filterOrders(){
   const q=(document.getElementById('search')?.value||'').toLowerCase();
   const fp=document.getElementById('filter-pay')?.value||'';
   const fo=document.getElementById('filter-order')?.value||'';
-  const list=allOrders.filter(o=>(!q||o.name.toLowerCase().includes(q)||o.phone.includes(q))&&(!fp||o.payStatus===fp)&&(!fo||o.orderStatus===fo));
+  const list=allOrders.filter(o=>
+    (!q||o.name.toLowerCase().includes(q)||o.phone.includes(q))&&
+    (!fp||o.payStatus===fp)&&
+    (!fo||o.orderStatus===fo)
+  );
   const wrap=document.getElementById('order-list-wrap');
   if(!list.length){wrap.innerHTML='<div class="empty">沒有符合條件的訂單</div>';return}
   wrap.innerHTML=mobile()
@@ -384,8 +414,17 @@ function filterOrders(){
 }
 
 function renderOrders(){filterOrders()}
-function payBadge(s){return s==='已匯款'?'<span class="badge b-paid">已匯款</span>':'<span class="badge b-unpaid">'+(s||'尚未付款')+'</span>'}
-function orderBadge(s){if(s==='已完成採購')return'<span class="badge b-done">已完成採購</span>';if(s==='已取消')return'<span class="badge b-cancel">已取消</span>';return'<span class="badge b-pending">'+(s||'處理中')+'</span>';}
+
+function payBadge(s){
+  return s==='已匯款'
+    ?'<span class="badge b-paid">已匯款</span>'
+    :'<span class="badge b-unpaid">'+(s||'尚未付款')+'</span>';
+}
+function orderBadge(s){
+  if(s==='已完成採購')return'<span class="badge b-done">已完成採購</span>';
+  if(s==='已取消')return'<span class="badge b-cancel">已取消</span>';
+  return'<span class="badge b-pending">'+(s||'處理中')+'</span>';
+}
 
 async function viewOrder(id){
   const o=allOrders.find(x=>x.id===id);if(!o)return;
@@ -469,20 +508,31 @@ function openNewOrder(){
 async function createOrder(){
   const name=document.getElementById('n-name').value.trim();
   if(!name)return showErr('請填寫客戶姓名');
-  const btn=document.getElementById('create-btn');btn.textContent='建立中...';btn.disabled=true;
-  const props={'訂購姓名':{title:[{text:{content:name}}]},'訂購管道':{multi_select:{name:document.getElementById('n-channel').value}}};
-  const date=document.getElementById('n-date').value;if(date)props['訂購日期']={date:{start:date}};
-  const note=document.getElementById('n-note').value;if(note)props['備註']={rich_text:[{text:{content:note}}]};
-  const phone=document.getElementById('n-phone').value.trim();if(phone)props['電話']={phone_number:phone};
+  const btn=document.getElementById('create-btn');
+  btn.textContent='建立中...';btn.disabled=true;
+  const channel=document.getElementById('n-channel').value;
+  const props={
+    '訂購姓名':{title:[{text:{content:name}}]},
+    '訂購管道':{select:{name:channel}},
+  };
+  const date=document.getElementById('n-date').value;
+  if(date)props['訂購日期']={date:{start:date}};
+  const note=document.getElementById('n-note').value;
+  if(note)props['備註']={rich_text:[{text:{content:note}}]};
+  const phone=document.getElementById('n-phone').value.trim();
+  if(phone)props['電話']={phone_number:phone};
   try{
-    await api('pages','POST',{parent:{dataＨbase_id:cfg.dbOrders},properties:props});
-    closeModal('new-modal');showOk('訂單已建立到 Notion！');setTimeout(loadOrders,800);
+    await api('pages','POST',{parent:{database_id:cfg.dbOrders},properties:props});
+    closeModal('new-modal');
+    showOk('訂單已建立到 Notion！');
+    setTimeout(loadOrders,800);
   }catch(e){showErr('建立失敗：'+e.message)}
   finally{btn.textContent='建立訂單';btn.disabled=false;}
 }
 
 function closeModal(id){document.getElementById(id).style.display='none'}
 document.querySelectorAll('.overlay').forEach(el=>el.addEventListener('click',e=>{if(e.target===el)el.style.display='none'}));
+
 function showTab(id,btn){
   document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
   document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
