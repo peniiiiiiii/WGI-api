@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🧸 茶熊後台</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f4f0;color:#1a1a1a;font-size:14px}
+.topbar{background:#fff;border-bottom:1px solid #e5e5e5;padding:0 24px;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:10}
+.brand{font-size:16px;font-weight:600}
+.brand span{font-size:12px;font-weight:400;color:#888;margin-left:8px}
+#conn-status{font-size:12px;margin-left:8px}
+.container{max-width:1100px;margin:0 auto;padding:24px 16px}
+.nav{display:flex;gap:0;margin-bottom:24px;border-bottom:1px solid #e5e5e5;background:#fff;border-radius:10px 10px 0 0;padding:0 8px}
+.nav button{padding:12px 18px;border:none;background:none;cursor:pointer;font-size:13px;color:#888;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all 0.15s;font-weight:500}
+.nav button.active{color:#1a1a1a;border-bottom-color:#1a1a1a}
+.section{display:none}.section.active{display:block}
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.metric{background:#fff;border-radius:10px;padding:16px;border:1px solid #eee}
+.metric-val{font-size:24px;font-weight:600}
+.metric-label{font-size:12px;color:#888;margin-top:4px}
+.card{background:#fff;border-radius:10px;padding:16px 20px;margin-bottom:16px;border:1px solid #eee}
+.card-title{font-size:14px;font-weight:600;margin-bottom:14px}
+table{width:100%;border-collapse:collapse;table-layout:fixed}
+th{font-size:11px;color:#888;font-weight:500;text-align:left;padding:0 8px 10px 0;border-bottom:1px solid #eee}
+td{padding:10px 8px 10px 0;border-bottom:1px solid #f0f0f0;vertical-align:middle;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+tr:last-child td{border-bottom:none}
+.badge{display:inline-block;padding:2px 10px;border-radius:99px;font-size:11px;font-weight:500}
+.b-paid{background:#e8f5e9;color:#2e7d32}
+.b-unpaid{background:#fff3e0;color:#e65100}
+.b-done{background:#e0f2f1;color:#00695c}
+.b-cancel{background:#fce4ec;color:#c62828}
+.b-pending{background:#e3f2fd;color:#1565c0}
+button{cursor:pointer;font-family:inherit}
+.btn{padding:8px 18px;border-radius:8px;border:1px solid #ddd;background:#fff;color:#1a1a1a;font-size:13px;font-weight:500;transition:all 0.15s}
+.btn:hover{background:#f5f5f5}
+.btn-primary{background:#1a1a1a;color:#fff;border-color:#1a1a1a}
+.btn-primary:hover{background:#333}
+.btn-sm{padding:4px 12px;font-size:12px}
+.btn-danger{color:#c62828;border-color:#ef9a9a}
+.toolbar{display:flex;gap:8px;margin-bottom:14px;align-items:center;flex-wrap:wrap}
+.toolbar input,.toolbar select{padding:8px 12px;border-radius:8px;border:1px solid #ddd;background:#fff;color:#1a1a1a;font-size:13px}
+.toolbar input{flex:1;min-width:160px;max-width:280px}
+.empty{text-align:center;padding:3rem;color:#aaa;font-size:14px}
+.loading{text-align:center;padding:2rem;color:#aaa;font-size:13px}
+.err-bar{background:#ffebee;color:#c62828;padding:12px 16px;border-radius:8px;font-size:13px;margin-bottom:16px;display:none;line-height:1.6;border:1px solid #ffcdd2}
+.ok-bar{background:#e8f5e9;color:#2e7d32;padding:12px 16px;border-radius:8px;font-size:13px;margin-bottom:16px;display:none;border:1px solid #c8e6c9}
+.overlay{display:none;position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:100;align-items:center;justify-content:center;padding:24px}
+.modal{background:#fff;border-radius:12px;padding:24px;width:100%;max-width:520px;max-height:90vh;overflow-y:auto}
+.modal-title{font-size:16px;font-weight:600;margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid #eee}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:16px;padding-top:12px;border-top:1px solid #eee}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:12px;color:#666;margin-bottom:4px;font-weight:500}
+.field input,.field select,.field textarea{width:100%;padding:8px 12px;border-radius:8px;border:1px solid #ddd;font-size:13px;font-family:inherit}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:#1a1a1a}
+.field textarea{resize:vertical;min-height:70px}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.detail-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #f0f0f0;font-size:13px}
+.detail-row:last-child{border:none}
+.detail-key{color:#888;flex-shrink:0;margin-right:12px}
+.status-select{padding:5px 10px;border-radius:8px;border:1px solid #ddd;background:#fff;font-size:12px;cursor:pointer;font-family:inherit}
+.notion-link{display:inline-block;margin-top:12px;font-size:12px;color:#1565c0;text-decoration:none}
+.notion-link:hover{text-decoration:underline}
+@media(max-width:600px){.metrics{grid-template-columns:1fr 1fr}.fgrid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">🧸 茶熊後台 <span>集運訂單管理</span><span id="conn-status" style="color:#888">連線中...</span></div>
+  <button class="btn btn-primary btn-sm" onclick="openNewOrder()">＋ 新增訂單</button>
+</div>
+
+<div class="container">
+  <div id="err-bar" class="err-bar"></div>
+  <div id="ok-bar" class="ok-bar"></div>
+
+  <div class="nav">
+    <button class="active" onclick="showTab('dashboard',this)">總覽</button>
+    <button onclick="showTab('orders',this)">訂單列表</button>
+    <button onclick="showTab('products',this)">商品資料</button>
+    <button onclick="showTab('settings',this)">設定</button>
+  </div>
+
+  <!-- 總覽 -->
+  <div id="tab-dashboard" class="section active">
+    <div class="metrics">
+      <div class="metric"><div class="metric-val" id="m-total">—</div><div class="metric-label">總訂單數</div></div>
+      <div class="metric"><div class="metric-val" id="m-revenue">—</div><div class="metric-label">已收款金額</div></div>
+      <div class="metric"><div class="metric-val" id="m-unpaid">—</div><div class="metric-label">未付款訂單</div></div>
+      <div class="metric"><div class="metric-val" id="m-done">—</div><div class="metric-label">已完成採購</div></div>
+    </div>
+    <div class="card">
+      <div class="card-title">最近訂單</div>
+      <div id="recent-list"><div class="loading">載入中...</div></div>
+    </div>
+  </div>
+
+  <!-- 訂單列表 -->
+  <div id="tab-orders" class="section">
+    <div class="toolbar">
+      <input type="text" id="search" placeholder="搜尋客戶姓名 / 電話..." oninput="filterOrders()">
+      <select id="filter-pay" onchange="filterOrders()">
+        <option value="">全部付款狀態</option>
+        <option value="已匯款">已匯款</option>
+        <option value="尚未付款">尚未付款</option>
+      </select>
+      <select id="filter-order" onchange="filterOrders()">
+        <option value="">全部訂單狀態</option>
+        <option value="已完成採購">已完成採購</option>
+        <option value="未完成">未完成</option>
+      </select>
+      <button class="btn btn-sm" onclick="loadOrders()">重新整理</button>
+    </div>
+    <div class="card" style="padding:12px 20px">
+      <div id="order-table"><div class="loading">載入中...</div></div>
+    </div>
+  </div>
+
+  <!-- 商品資料 -->
+  <div id="tab-products" class="section">
+    <div class="card" style="padding:12px 20px">
+      <div id="product-table"><div class="loading">載入中...</div></div>
+    </div>
+  </div>
+
+  <!-- 設定 -->
+  <div id="tab-settings" class="section">
+    <div class="card">
+      <div class="card-title">Notion 資料庫設定</div>
+      <div class="field"><label>Vercel 後端網址</label><input type="text" id="s-api" placeholder="https://wgi-api.vercel.app"></div>
+      <div class="fgrid">
+        <div class="field"><label>商品資料表 Database ID</label><input type="text" id="s-products"></div>
+        <div class="field"><label>客戶訂單／總表 Database ID</label><input type="text" id="s-orders"></div>
+      </div>
+      <div class="field" style="max-width:49%"><label>客戶訂單／明細 Database ID</label><input type="text" id="s-items"></div>
+      <button class="btn btn-primary" onclick="saveSettings()">儲存並重新連線</button>
+    </div>
+    <div class="card">
+      <div class="card-title">新增月份資料庫</div>
+      <p style="font-size:13px;color:#888;margin-bottom:14px">每個月新開資料庫時在這裡登記，系統即可跨月查詢所有訂單。</p>
+      <div class="fgrid" style="margin-bottom:10px">
+        <div class="field"><label>月份標籤（如 2026/05）</label><input type="text" id="m-label" placeholder="2026/05"></div>
+        <div class="field"><label>總表 Database ID</label><input type="text" id="m-orders"></div>
+      </div>
+      <div class="fgrid" style="margin-bottom:12px">
+        <div class="field"><label>明細 Database ID</label><input type="text" id="m-items"></div>
+        <div class="field"><label>商品資料表 Database ID</label><input type="text" id="m-products"></div>
+      </div>
+      <button class="btn" onclick="addMonth()">新增月份</button>
+      <div id="month-list" style="margin-top:14px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- 訂單詳情 Modal -->
+<div id="detail-modal" class="overlay">
+  <div class="modal">
+    <div class="modal-title" id="detail-title">訂單詳情</div>
+    <div id="detail-body"></div>
+    <div class="modal-actions">
+      <button class="btn btn-sm" onclick="closeModal('detail-modal')">關閉</button>
+    </div>
+  </div>
+</div>
+
+<!-- 新增訂單 Modal -->
+<div id="new-modal" class="overlay">
+  <div class="modal">
+    <div class="modal-title">新增訂單到 Notion</div>
+    <div class="fgrid">
+      <div class="field"><label>客戶姓名 *</label><input type="text" id="n-name" placeholder="01-王小明"></div>
+      <div class="field"><label>電話</label><input type="text" id="n-phone" placeholder="0912345678"></div>
+    </div>
+    <div class="fgrid">
+      <div class="field"><label>訂購管道</label>
+        <select id="n-channel"><option>Line 官方</option><option>Line 私訊</option><option>Instagram</option><option>其他</option></select>
+      </div>
+      <div class="field"><label>訂購日期</label><input type="date" id="n-date"></div>
+    </div>
+    <div class="field"><label>備註</label><textarea id="n-note" placeholder="特殊需求..."></textarea></div>
+    <div class="modal-actions">
+      <button class="btn btn-sm" onclick="closeModal('new-modal')">取消</button>
+      <button class="btn btn-primary btn-sm" id="create-btn" onclick="createOrder()">建立訂單</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const DEFAULT_API='https://wgi-api.vercel.app';
+const DEFAULT_DB_ORDERS='334efe43aea08127a792e757ab1f9d7b';
+const DEFAULT_DB_ITEMS='334efe43aea08137ae52c33a3f40b074';
+const DEFAULT_DB_PRODUCTS='334efe43aea080c68870caabf336e539';
+
+let cfg={api:DEFAULT_API,dbOrders:DEFAULT_DB_ORDERS,dbItems:DEFAULT_DB_ITEMS,dbProducts:DEFAULT_DB_PRODUCTS};
+let months=[];
+let allOrders=[];
+
+function loadCfg(){
+  try{const s=localStorage.getItem('cx_cfg');if(s)cfg={...cfg,...JSON.parse(s)}}catch(e){}
+  try{const m=localStorage.getItem('cx_months');if(m)months=JSON.parse(m)}catch(e){}
+  document.getElementById('s-api').value=cfg.api;
+  document.getElementById('s-products').value=cfg.dbProducts;
+  document.getElementById('s-orders').value=cfg.dbOrders;
+  document.getElementById('s-items').value=cfg.dbItems;
+  renderMonthList();
+}
+
+function saveSettings(){
+  cfg.api=document.getElementById('s-api').value.trim().replace(/\/$/,'');
+  cfg.dbProducts=document.getElementById('s-products').value.trim();
+  cfg.dbOrders=document.getElementById('s-orders').value.trim();
+  cfg.dbItems=document.getElementById('s-items').value.trim();
+  try{localStorage.setItem('cx_cfg',JSON.stringify(cfg))}catch(e){}
+  showOk('設定已儲存！');setTimeout(loadAll,400);
+}
+
+function addMonth(){
+  const label=document.getElementById('m-label').value.trim();
+  const orders=document.getElementById('m-orders').value.trim();
+  if(!label||!orders)return showErr('請填寫月份標籤和總表 ID');
+  months.push({label,orders,items:document.getElementById('m-items').value.trim(),products:document.getElementById('m-products').value.trim()});
+  try{localStorage.setItem('cx_months',JSON.stringify(months))}catch(e){}
+  document.getElementById('m-label').value='';document.getElementById('m-orders').value='';
+  document.getElementById('m-items').value='';document.getElementById('m-products').value='';
+  renderMonthList();showOk('月份已新增！');setTimeout(loadAll,400);
+}
+
+function removeMonth(i){months.splice(i,1);try{localStorage.setItem('cx_months',JSON.stringify(months))}catch(e){}renderMonthList();}
+
+function renderMonthList(){
+  const el=document.getElementById('month-list');
+  if(!months.length){el.innerHTML='<p style="font-size:13px;color:#aaa">目前只有預設月份（2026/04）</p>';return}
+  el.innerHTML=months.map((m,i)=>`<div style="display:flex;align-items:center;justify-content:space-between;padding:6px 0;border-bottom:1px solid #f0f0f0;font-size:13px"><span>${m.label}</span><button class="btn btn-sm btn-danger" onclick="removeMonth(${i})">移除</button></div>`).join('');
+}
+
+async function api(path,method,body){
+  const url=`${cfg.api}/api/notion?path=${encodeURIComponent(path)}`;
+  const r=await fetch(url,{method:method||'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body||{})});
+  const data=await r.json();
+  if(!r.ok)throw new Error(data.error||data.message||r.status);
+  return data;
+}
+
+async function queryDb(dbId){
+  const data=await api(`databases/${dbId}/query`,'POST',{page_size:100});
+  return data.results||[];
+}
+
+function gp(props,key,type){
+  const p=props[key];if(!p)return type==='number'?0:'';
+  if(type==='title')return(p.title||[]).map(t=>t.plain_text).join('')||'';
+  if(type==='number')return p.number||0;
+  if(type==='select')return p.select?.name||'';
+  if(type==='date')return p.date?.start||'';
+  if(type==='rich_text')return(p.rich_text||[]).map(t=>t.plain_text).join('')||'';
+  if(type==='phone')return p.phone_number||'';
+  if(type==='rollup')return p.rollup?.number||0;
+  return'';
+}
+
+function parseOrder(page){
+  const p=page.properties;
+  return{id:page.id,name:gp(p,'訂購姓名','title'),channel:gp(p,'訂購管道','select'),date:gp(p,'訂購日期','date'),total:Number(gp(p,'總金額','rollup')||gp(p,'總金額','number')||0),payStatus:gp(p,'付款狀態','select'),orderStatus:gp(p,'訂單狀態','select'),note:gp(p,'備註','rich_text'),phone:gp(p,'電話','phone')||gp(p,'電話','rich_text')||''};
+}
+
+function setStatus(text,ok){
+  const el=document.getElementById('conn-status');
+  el.textContent=' · '+text;
+  el.style.color=ok===true?'#2e7d32':ok===false?'#c62828':'#888';
+}
+
+async function loadOrders(){
+  document.getElementById('order-table').innerHTML='<div class="loading">從 Notion 載入中...</div>';
+  document.getElementById('recent-list').innerHTML='<div class="loading">載入中...</div>';
+  setStatus('連線中...',null);
+  try{
+    const ids=[cfg.dbOrders,...months.map(m=>m.orders).filter(Boolean)];
+    const results=await Promise.all(ids.map(id=>queryDb(id)));
+    allOrders=results.flat().map(parseOrder).filter(o=>o.name);
+    setStatus('已連線 ✓',true);
+    renderMetrics();renderRecent();renderOrders();
+  }catch(e){
+    setStatus('連線失敗',false);
+    showErr('載入失敗：'+e.message);
+    document.getElementById('order-table').innerHTML='<div class="empty">載入失敗，請確認設定</div>';
+    document.getElementById('recent-list').innerHTML='<div class="empty">—</div>';
+  }
+}
+
+async function loadProducts(){
+  document.getElementById('product-table').innerHTML='<div class="loading">載入中...</div>';
+  try{
+    const pages=await queryDb(cfg.dbProducts);
+    const list=pages.map(p=>({name:gp(p.properties,'商品名稱','title'),price:gp(p.properties,'訂價','number'),count:gp(p.properties,'訂購數量','rollup'),total:gp(p.properties,'項目總額','rollup')||gp(p.properties,'項目總...','rollup')})).filter(p=>p.name);
+    if(!list.length){document.getElementById('product-table').innerHTML='<div class="empty">無商品資料</div>';return}
+    document.getElementById('product-table').innerHTML=`<table><thead><tr><th style="width:40%">商品名稱</th><th style="width:20%">訂價</th><th style="width:15%">訂購數</th><th style="width:25%">項目總額</th></tr></thead><tbody>${list.map(p=>`<tr><td title="${p.name}">${p.name}</td><td>NT$${Number(p.price).toLocaleString()}</td><td>${p.count}</td><td>NT$${Number(p.total).toLocaleString()}</td></tr>`).join('')}</tbody></table>`;
+  }catch(e){document.getElementById('product-table').innerHTML='<div class="empty">載入失敗：'+e.message+'</div>'}
+}
+
+function renderMetrics(){
+  document.getElementById('m-total').textContent=allOrders.length;
+  document.getElementById('m-revenue').textContent='NT$'+allOrders.reduce((a,o)=>a+(o.payStatus==='已匯款'?o.total:0),0).toLocaleString();
+  document.getElementById('m-unpaid').textContent=allOrders.filter(o=>o.payStatus!=='已匯款').length;
+  document.getElementById('m-done').textContent=allOrders.filter(o=>o.orderStatus==='已完成採購').length;
+}
+
+function renderRecent(){
+  const list=allOrders.slice(0,6);
+  if(!list.length){document.getElementById('recent-list').innerHTML='<div class="empty">尚無資料</div>';return}
+  document.getElementById('recent-list').innerHTML=`<table><thead><tr><th style="width:30%">客戶</th><th style="width:18%">金額</th><th style="width:18%">付款</th><th style="width:20%">訂單</th><th style="width:14%"></th></tr></thead><tbody>${list.map(o=>`<tr><td title="${o.name}">${o.name}</td><td>NT$${o.total.toLocaleString()}</td><td>${payBadge(o.payStatus)}</td><td>${orderBadge(o.orderStatus)}</td><td><button class="btn btn-sm" onclick="viewOrder('${o.id}')">詳情</button></td></tr>`).join('')}</tbody></table>`;
+}
+
+function filterOrders(){
+  const q=(document.getElementById('search')?.value||'').toLowerCase();
+  const fp=document.getElementById('filter-pay')?.value||'';
+  const fo=document.getElementById('filter-order')?.value||'';
+  const list=allOrders.filter(o=>(!q||o.name.toLowerCase().includes(q)||o.phone.includes(q))&&(!fp||o.payStatus===fp)&&(!fo||o.orderStatus===fo));
+  if(!list.length){document.getElementById('order-table').innerHTML='<div class="empty">沒有符合條件的訂單</div>';return}
+  document.getElementById('order-table').innerHTML=`<table><thead><tr><th style="width:25%">客戶</th><th style="width:12%">日期</th><th style="width:14%">金額</th><th style="width:16%">付款狀態</th><th style="width:18%">訂單狀態</th><th style="width:15%">操作</th></tr></thead><tbody>${list.map(o=>`<tr><td title="${o.name}">${o.name}</td><td>${o.date?o.date.slice(5):'-'}</td><td>NT$${o.total.toLocaleString()}</td><td>${payBadge(o.payStatus)}</td><td>${orderBadge(o.orderStatus)}</td><td><button class="btn btn-sm" onclick="viewOrder('${o.id}')">詳情</button></td></tr>`).join('')}</tbody></table>`;
+}
+
+function renderOrders(){filterOrders()}
+function payBadge(s){return s==='已匯款'?'<span class="badge b-paid">已匯款</span>':'<span class="badge b-unpaid">'+(s||'尚未付款')+'</span>'}
+function orderBadge(s){if(s==='已完成採購')return'<span class="badge b-done">已完成採購</span>';if(s==='已取消')return'<span class="badge b-cancel">已取消</span>';return'<span class="badge b-pending">'+(s||'處理中')+'</span>';}
+
+function viewOrder(id){
+  const o=allOrders.find(x=>x.id===id);if(!o)return;
+  document.getElementById('detail-title').textContent='訂單詳情 — '+o.name;
+  document.getElementById('detail-body').innerHTML=`
+    <div class="detail-row"><span class="detail-key">客戶姓名</span><span>${o.name}</span></div>
+    <div class="detail-row"><span class="detail-key">電話</span><span>${o.phone||'—'}</span></div>
+    <div class="detail-row"><span class="detail-key">訂購管道</span><span>${o.channel||'—'}</span></div>
+    <div class="detail-row"><span class="detail-key">訂購日期</span><span>${o.date||'—'}</span></div>
+    <div class="detail-row"><span class="detail-key">總金額</span><span style="font-weight:600">NT$${o.total.toLocaleString()}</span></div>
+    <div class="detail-row"><span class="detail-key">付款狀態</span><select class="status-select" onchange="updateStatus('${o.id}','付款狀態',this.value)"><option ${o.payStatus==='已匯款'?'selected':''}>已匯款</option><option ${o.payStatus!=='已匯款'?'selected':''}>尚未付款</option></select></div>
+    <div class="detail-row"><span class="detail-key">訂單狀態</span><select class="status-select" onchange="updateStatus('${o.id}','訂單狀態',this.value)"><option ${o.orderStatus==='已完成採購'?'selected':''}>已完成採購</option><option ${o.orderStatus==='未完成'?'selected':''}>未完成</option><option ${o.orderStatus==='已取消'?'selected':''}>已取消</option></select></div>
+    ${o.note?`<div class="detail-row"><span class="detail-key">備註</span><span style="text-align:right;max-width:65%">${o.note}</span></div>`:''}
+    <a class="notion-link" href="https://www.notion.so/${o.id.replace(/-/g,'')}" target="_blank">在 Notion 中開啟 →</a>`;
+  document.getElementById('detail-modal').style.display='flex';
+}
+
+async function updateStatus(pageId,field,value){
+  try{
+    await api(`pages/${pageId}`,'PATCH',{properties:{[field]:{select:{name:value}}}});
+    const o=allOrders.find(x=>x.id===pageId);
+    if(o){if(field==='付款狀態')o.payStatus=value;else o.orderStatus=value;}
+    showOk('已更新到 Notion ✓');
+  }catch(e){showErr('更新失敗：'+e.message)}
+}
+
+function openNewOrder(){
+  document.getElementById('n-date').value=new Date().toISOString().slice(0,10);
+  document.getElementById('n-name').value='';document.getElementById('n-phone').value='';document.getElementById('n-note').value='';
+  document.getElementById('new-modal').style.display='flex';
+}
+
+async function createOrder(){
+  const name=document.getElementById('n-name').value.trim();
+  if(!name)return showErr('請填寫客戶姓名');
+  const btn=document.getElementById('create-btn');btn.textContent='建立中...';btn.disabled=true;
+  const props={'訂購姓名':{title:[{text:{content:name}}]},'訂購管道':{select:{name:document.getElementById('n-channel').value}}};
+  const date=document.getElementById('n-date').value;if(date)props['訂購日期']={date:{start:date}};
+  const note=document.getElementById('n-note').value;if(note)props['備註']={rich_text:[{text:{content:note}}]};
+  const phone=document.getElementById('n-phone').value.trim();if(phone)props['電話']={phone_number:phone};
+  try{
+    await api('pages','POST',{parent:{database_id:cfg.dbOrders},properties:props});
+    closeModal('new-modal');showOk('訂單已成功建立到 Notion！');setTimeout(loadOrders,800);
+  }catch(e){showErr('建立失敗：'+e.message)}
+  finally{btn.textContent='建立訂單';btn.disabled=false;}
+}
+
+function closeModal(id){document.getElementById(id).style.display='none'}
+document.querySelectorAll('.overlay').forEach(el=>el.addEventListener('click',function(e){if(e.target===this)this.style.display='none'}));
+
+function showTab(id,btn){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav button').forEach(b=>b.classList.remove('active'));
+  document.getElementById('tab-'+id).classList.add('active');btn.classList.add('active');
+  if(id==='orders'){if(!allOrders.length)loadOrders();else renderOrders();}
+  if(id==='products')loadProducts();
+  if(id==='dashboard'&&!allOrders.length)loadAll();
+}
+function showErr(msg){const e=document.getElementById('err-bar');e.textContent=msg;e.style.display='block';setTimeout(()=>e.style.display='none',6000)}
+function showOk(msg){const e=document.getElementById('ok-bar');e.textContent=msg;e.style.display='block';setTimeout(()=>e.style.display='none',4000)}
+function loadAll(){loadOrders();loadProducts()}
+
+loadCfg();loadAll();
+</script>
+</body>
+</html>
