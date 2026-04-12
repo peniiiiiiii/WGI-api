@@ -230,7 +230,7 @@ let allOrders=[];
 const mobile=()=>window.innerWidth<640;
 
 function loadCfg(){
-  try{const s=localStorage.getItem('cx_cfg');if(s)cfg={...cfg,...JSON.parse(s)}}catch(e){}
+  try{const s=localStorage.getItem('cx_cfg');if(s){const saved=JSON.parse(s);if(saved.api)cfg.api=saved.api;if(saved.dbOrders)cfg.dbOrders=saved.dbOrders;if(saved.dbItems)cfg.dbItems=saved.dbItems;if(saved.dbProducts)cfg.dbProducts=saved.dbProducts;}}catch(e){}
   try{const m=localStorage.getItem('cx_months');if(m)months=JSON.parse(m)}catch(e){}
   document.getElementById('s-api').value=cfg.api;
   document.getElementById('s-products').value=cfg.dbProducts;
