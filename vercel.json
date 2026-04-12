@@ -4,5 +4,9 @@
     "api/notion.js": {
       "maxDuration": 10
     }
-  }
+  },
+  "routes": [
+    { "src": "/api/(.*)", "dest": "/api/notion.js" },
+    { "src": "/(.*)", "dest": "/$1" }
+  ]
 }
