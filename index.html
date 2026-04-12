@@ -284,8 +284,7 @@ function gp(props,key,type){
   const p=props[key];if(!p)return type==='number'?0:'';
   if(type==='title')return(p.title||[]).map(t=>t.plain_text).join('')||'';
   if(type==='number')return p.number||0;
-  if(type==='select')return p.select?.name||'';
-  if(type==='date')return p.date?.start||'';
+if(type==='multi_select')return(p.multi_select||[]).map(s=>s.name).join(', ')||'';  if(type==='date')return p.date?.start||'';
   if(type==='rich_text')return(p.rich_text||[]).map(t=>t.plain_text).join('')||'';
   if(type==='phone')return p.phone_number||'';
   if(type==='rollup')return p.rollup?.number||0;
@@ -295,7 +294,7 @@ function gp(props,key,type){
 
 function parseOrder(page){
   const p=page.properties;
-  return{id:page.id,name:gp(p,'訂購姓名','title'),channel:gp(p,'訂購管道','select'),date:gp(p,'訂購日期','date'),total:Number(gp(p,'總金額','rollup')||gp(p,'總金額','number')||0),payStatus:gp(p,'付款狀態','select'),orderStatus:gp(p,'訂單狀態','select'),note:gp(p,'備註','rich_text'),phone:gp(p,'電話','phone')||gp(p,'電話','rich_text')||''};
+  return{id:page.id,name:gp(p,'訂購姓名','title'),channel:gp(p,'訂購管道','multi_select'),date:gp(p,'訂購日期','date'),total:Number(gp(p,'總金額','rollup')||gp(p,'總金額','number')||0),payStatus:gp(p,'付款狀態','select'),orderStatus:gp(p,'訂單狀態','select'),note:gp(p,'備註','rich_text'),phone:gp(p,'電話','phone')||gp(p,'電話','rich_text')||''};
 }
 
 function setStatus(text,ok){
@@ -471,12 +470,12 @@ async function createOrder(){
   const name=document.getElementById('n-name').value.trim();
   if(!name)return showErr('請填寫客戶姓名');
   const btn=document.getElementById('create-btn');btn.textContent='建立中...';btn.disabled=true;
-  const props={'訂購姓名':{title:[{text:{content:name}}]},'訂購管道':{select:{name:document.getElementById('n-channel').value}}};
+  const props={'訂購姓名':{title:[{text:{content:name}}]},'訂購管道':{multi_select:{name:document.getElementById('n-channel').value}}};
   const date=document.getElementById('n-date').value;if(date)props['訂購日期']={date:{start:date}};
   const note=document.getElementById('n-note').value;if(note)props['備註']={rich_text:[{text:{content:note}}]};
   const phone=document.getElementById('n-phone').value.trim();if(phone)props['電話']={phone_number:phone};
   try{
-    await api('pages','POST',{parent:{database_id:cfg.dbOrders},properties:props});
+    await api('pages','POST',{parent:{dataＨbase_id:cfg.dbOrders},properties:props});
     closeModal('new-modal');showOk('訂單已建立到 Notion！');setTimeout(loadOrders,800);
   }catch(e){showErr('建立失敗：'+e.message)}
   finally{btn.textContent='建立訂單';btn.disabled=false;}
